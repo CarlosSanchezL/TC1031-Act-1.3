@@ -1,3 +1,5 @@
+//Juan Pablo Torres - A01743268 Juan Pablo Gil - A01741619 Carlos Francisco Sánchez Llanes - A01741201
+
 #include <iostream>
 #include <fstream>
 #include <vector>
