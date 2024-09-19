@@ -4,7 +4,6 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
-#include <iomanip>
 #include <limits>
 
 struct LogEntry {
@@ -78,10 +77,14 @@ void writeSearchResults(const std::vector<LogEntry>& results, int searchNumber, 
 
 int main() {
     int teamNumber;
+    int searchNumber = 1;
+
+    // Inicializar el número de equipo al inicio del programa
     std::cout << "Ingrese el número del equipo: ";
     std::cin >> teamNumber;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Limpiar el buffer de entrada
 
-    // Leer y ordenar los logs inmediatamente
+    // Leer y ordenar los logs
     auto logs = readLogFile("bitacora.txt");
     
     if (logs.empty()) {
@@ -89,16 +92,16 @@ int main() {
         return 1; // Salir si el archivo está vacío o no se pudo leer
     }
 
-    // Ordenar los logs por fecha y hora antes de cualquier búsqueda
+    // Ordenar los logs por fecha y hora
     std::sort(logs.begin(), logs.end(), [](const LogEntry& a, const LogEntry& b) {
         return a.getSortableDateTime() < b.getSortableDateTime();
     });
 
-    // Escribir los logs ordenados inmediatamente
+    // Escribir los logs ordenados
     writeSortedLogs(logs, teamNumber);
 
-    int searchNumber = 1;
-    
+    std::cout << "Los logs han sido ordenados y guardados en bitacoraOrdenada1.3-eq" << teamNumber << ".txt" << std::endl;
+
     while (true) {
         std::string startDate, endDate;
         std::cout << "Ingrese la fecha de inicio (Ej. Oct 5 10:00:00): ";
@@ -107,23 +110,28 @@ int main() {
         std::cout << "Ingrese la fecha de fin (Ej. Oct 10 23:59:59): ";
         std::getline(std::cin >> std::ws, endDate);
 
-        // Buscar en los logs por el rango de fechas ingresado
         auto results = searchLogs(logs, startDate, endDate);
         
-        // Escribir los resultados de la búsqueda inmediatamente en salida1-eqX.txt
+        // Escribir los resultados de la búsqueda
         writeSearchResults(results, searchNumber, teamNumber);
+
+        std::cout << "Resultados guardados en salida" << searchNumber << "-eq" << teamNumber << ".txt" << std::endl;
 
         char again;
         std::cout << "¿Desea hacer una nueva búsqueda? (s/n): ";
         std::cin >> again;
         
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Limpiar el buffer de entrada
 
         if (again != 's') break;
 
         searchNumber++;
+        
+        // Volver a pedir el número del equipo para cada nueva búsqueda
+        std::cout << "Ingrese el número del equipo: ";
+        std::cin >> teamNumber;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Limpiar el buffer de entrada
     }
 
     return 0;
 }
-
